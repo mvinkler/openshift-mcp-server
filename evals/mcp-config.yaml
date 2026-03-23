@@ -1,5 +1,5 @@
 mcpServers:
   kubernetes:
     type: http
-    url: http://localhost:8080/mcp
+    url: https://openshift-mcp-server.apps.mcp-ocp-3.ci-psi.rhocf-dev.net/mcp
     enableAllTools: true
