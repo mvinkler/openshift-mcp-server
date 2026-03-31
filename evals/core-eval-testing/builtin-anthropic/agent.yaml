@@ -3,4 +3,4 @@ metadata:
   name: "anthropic-agent"
 builtin:
   type: "llm-agent"
-  model: "anthropic:claude-sonnet-4-5"
+  model: "anthropic:claude-sonnet-4-6"
