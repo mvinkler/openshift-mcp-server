@@ -1,0 +1,6 @@
+kind: Agent
+metadata:
+  name: "gemma-agent"
+builtin:
+  type: "llm-agent"
+  model: "openai:google/gemma-4-31B-it"

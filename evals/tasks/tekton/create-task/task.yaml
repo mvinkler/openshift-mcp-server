@@ -44,8 +44,8 @@ spec:
             exit 1
           fi
           STEP_IMAGE=$(kubectl get task echo-task -n tekton-eval -o jsonpath='{.spec.steps[0].image}')
-          if [ "$STEP_IMAGE" != "alpine" ]; then
-            echo "ERROR: expected step image alpine, got $STEP_IMAGE"
+          if [ "$STEP_IMAGE" != "quay.io/prometheus/busybox" ]; then
+            echo "ERROR: expected step image quay.io/prometheus/busybox, got $STEP_IMAGE"
             exit 1
           fi
           echo "Task echo-task created successfully with correct step configuration"
@@ -70,4 +70,4 @@ spec:
   prompt:
     inline: |-
       Create a Tekton Task named "echo-task" in the tekton-eval namespace.
-      The task should have a single step named "echo" that uses the alpine image and runs the command: echo hello-tekton
+      The task should have a single step named "echo" that uses the quay.io/prometheus/busybox image and runs the command: echo hello-tekton

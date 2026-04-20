@@ -1,14 +1,17 @@
 kind: Eval
 metadata:
-  name: "core-e2e"
+  name: "kiali-e2e"
 config:
+  defaultTaskLimits:
+    timeout: "15m"
+    cleanupTimeout: "3m"
   agent:
     type: "file"
     path: agent.yaml
   mcpConfigFile: ../../mcp-config.yaml
   extensions:
     kubernetes:
-      package: https://github.com/mcpchecker/kubernetes-extension@v0.0.3
+      package: https://github.com/mcpchecker/kubernetes-extension@v0.0.4
   llmJudge:
     env:
       baseUrlKey: JUDGE_BASE_URL
@@ -17,7 +20,7 @@ config:
   taskSets:
     - glob: ../../tasks/*/*/*.yaml
       labelSelector:
-        suite: core
+        suite: kiali
       assertions:
         toolsUsed:
           - server: kubernetes

@@ -144,9 +144,17 @@ ossm_kiali_workload_container_images() {
 ossm_kiali_image_tag() {
   local image="${1}"
   local no_digest="${image%%@*}"
+
+  # Digest-only reference (no :tag before @sha256:...) — no version tag to extract
+  if [ "${no_digest}" != "${image}" ] && ! echo "${no_digest}" | grep -q ':'; then
+    return 1
+  fi
+
+  # No digest and no colon at all — bare image name without any version info
   if [ "${no_digest}" = "${image}" ] && [ "${image#*:}" = "${image}" ]; then
     return 1
   fi
+
   local tag="${no_digest##*:}"
   if [ -z "${tag}" ]; then
     return 1
@@ -222,13 +230,9 @@ ossm_install_kiali_support() {
 
   local first_img="${images%% *}"
   local current_tag
-  if ! current_tag="$(ossm_kiali_image_tag "${first_img}")"; then
-    errormsg "Could not parse a version tag from image [${first_img}] (digest-based image?)."
-    return 1
-  fi
-  if [ -z "${current_tag}" ]; then
-    errormsg "Empty image tag from [${first_img}]."
-    return 1
+  if ! current_tag="$(ossm_kiali_image_tag "${first_img}")" || [ -z "${current_tag}" ]; then
+    infomsg "Could not parse a version tag from image [${first_img}] (digest-only reference). Assuming operator-installed version is adequate — skipping upgrade."
+    return 0
   fi
 
   infomsg "Detected Kiali image [${first_img}] (tag: [${current_tag}]). Required minimum: [${min_ver}]."

@@ -1,6 +1,6 @@
 kind: Eval
 metadata:
-  name: "helm-e2e"
+  name: "netedge-e2e"
 config:
   defaultTaskLimits:
     timeout: "15m"
@@ -20,10 +20,10 @@ config:
   taskSets:
     - glob: ../../tasks/*/*/*.yaml
       labelSelector:
-        suite: helm
+        suite: netedge
       assertions:
         toolsUsed:
           - server: kubernetes
             toolPattern: ".*"
         minToolCalls: 1
-        maxToolCalls: 10
+        maxToolCalls: 20

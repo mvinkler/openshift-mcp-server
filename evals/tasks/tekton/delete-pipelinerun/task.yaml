@@ -37,7 +37,7 @@ spec:
         spec:
           steps:
             - name: noop
-              image: alpine
+              image: quay.io/prometheus/busybox
               command: ["echo", "noop"]
     - k8s.create:
         apiVersion: tekton.dev/v1

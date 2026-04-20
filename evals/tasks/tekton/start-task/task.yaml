@@ -37,7 +37,7 @@ spec:
         spec:
           steps:
             - name: echo
-              image: alpine
+              image: quay.io/prometheus/busybox
               command: ["echo", "Hello, Tekton!"]
 
   verify:

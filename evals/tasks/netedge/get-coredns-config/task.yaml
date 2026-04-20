@@ -1,5 +1,7 @@
 kind: Task
 metadata:
+  labels:
+    suite: netedge
   name: get-coredns-config
 steps:
   verify:

@@ -37,7 +37,7 @@ spec:
         spec:
           steps:
             - name: echo
-              image: alpine
+              image: quay.io/prometheus/busybox
               command: ["echo", "hello"]
     - k8s.create:
         apiVersion: tekton.dev/v1
