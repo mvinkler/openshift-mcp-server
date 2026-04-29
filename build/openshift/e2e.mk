@@ -245,8 +245,17 @@ e2e-smoke-test: ## Smoke test the MCP server through the MCP Gateway
 	fi; \
 	echo "Smoke test passed. MCP server responded through the MCP Gateway."
 
+.PHONY: e2e-go-smoke-test
+e2e-go-smoke-test: ## Run Go-based e2e smoke tests against the MCP Gateway
+	@echo "Running Go e2e smoke tests..."
+	@ROUTE_HOST=$$(oc get route/mcp-gateway -n $(GATEWAY_NAMESPACE) \
+		-o jsonpath='{.spec.host}'); \
+	echo "Gateway endpoint: https://$$ROUTE_HOST/mcp"; \
+	MCP_GATEWAY_ENDPOINT="https://$$ROUTE_HOST/mcp" \
+	go test -tags e2e -v -count=1 ./e2e/...
+
 .PHONY: e2e-setup
 e2e-setup: e2e-install-operator e2e-install-gateway e2e-deploy-mcp-server e2e-register-mcp-server e2e-wait-ready ## Install all components and wait for readiness
 
 .PHONY: e2e-test
-e2e-test: e2e-setup e2e-smoke-test ## Run the full e2e test (setup + smoke tests)
+e2e-test: e2e-setup e2e-smoke-test e2e-go-smoke-test ## Run the full e2e test (setup + smoke tests)

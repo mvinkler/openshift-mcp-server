@@ -24,6 +24,7 @@ type mcpClientConfig struct {
 	headers              map[string]string
 	clientInfo           *mcp.Implementation
 	endpoint             string
+	transport            http.RoundTripper
 	allowConnectionError bool
 	elicitationHandler   func(context.Context, *mcp.ElicitRequest) (*mcp.ElicitResult, error)
 	capabilities         *mcp.ClientCapabilities
@@ -81,6 +82,21 @@ func (o endpointOption) apply(c *mcpClientConfig) {
 // The URL should include the full path (e.g., "http://localhost:8080/mcp").
 func WithEndpoint(endpoint string) McpClientOption {
 	return endpointOption{endpoint: endpoint}
+}
+
+// transportOption sets a custom HTTP transport
+type transportOption struct {
+	transport http.RoundTripper
+}
+
+func (o transportOption) apply(c *mcpClientConfig) {
+	c.transport = o.transport
+}
+
+// WithTransport sets a custom HTTP transport for the MCP client.
+// This is composed with header injection when WithHTTPHeaders is also used.
+func WithTransport(transport http.RoundTripper) McpClientOption {
+	return transportOption{transport: transport}
 }
 
 // allowConnectionErrorOption allows connection errors without failing the test
@@ -204,12 +220,18 @@ func NewMcpClient(t *testing.T, mcpHttpServer http.Handler, options ...McpClient
 		endpoint = ret.testServer.URL + "/mcp"
 	}
 
-	// Create HTTP client with custom headers if provided
-	httpClient := http.DefaultClient
+	// Build base transport, using custom transport if provided
+	baseTransport := http.DefaultTransport
+	if cfg.transport != nil {
+		baseTransport = cfg.transport
+	}
+
+	// Create HTTP client with optional header injection
+	httpClient := &http.Client{Transport: baseTransport}
 	if len(cfg.headers) > 0 {
 		httpClient = &http.Client{
 			Transport: &headerRoundTripper{
-				base:    http.DefaultTransport,
+				base:    baseTransport,
 				headers: cfg.headers,
 			},
 		}
